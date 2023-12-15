@@ -1,23 +1,50 @@
-[gd_scene load_steps=12 format=3 uid="uid://bd5m3yq1k5fx8"]
+[gd_scene load_steps=22 format=3 uid="uid://c76ip8vuk2pid"]
 
 [ext_resource type="Script" path="res://Brick/Brick_Container.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://dmwf8wjdir6y5" path="res://Paddle/Paddle.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://d3o7nr1d2l1p" path="res://Paddle/Paddle.tscn" id="2"]
+[ext_resource type="Shader" path="res://Effects/Background.gdshader" id="2_c2bsh"]
 [ext_resource type="Script" path="res://Ball/Ball_Container.gd" id="3"]
+[ext_resource type="Script" path="res://Effects/Background.gd" id="3_gn0ad"]
 [ext_resource type="Script" path="res://Game.gd" id="4"]
-[ext_resource type="PackedScene" uid="uid://ci5q3vmuimsfr" path="res://UI/Pause_Menu.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://ckbnb3u065ncy" path="res://UI/Pause_Menu.tscn" id="5"]
 [ext_resource type="Script" path="res://Wall/Wall.gd" id="6"]
-[ext_resource type="PackedScene" uid="uid://do7pdpjxteg8e" path="res://UI/HUD.tscn" id="7"]
-[ext_resource type="PackedScene" uid="uid://r1nm10jeqyta" path="res://UI/Instructions.tscn" id="8"]
-[ext_resource type="Script" path="res://Effects/Fever.gd" id="9"]
+[ext_resource type="PackedScene" uid="uid://drxwrc1b5f0hw" path="res://UI/HUD.tscn" id="7"]
+[ext_resource type="PackedScene" uid="uid://y45cm1yl1uhq" path="res://UI/Instructions.tscn" id="8"]
+[ext_resource type="Script" path="res://Effects/Camera.gd" id="9"]
+[ext_resource type="AudioStream" uid="uid://cvcmlka4tghf4" path="res://Assets/music.mp3" id="10"]
+[ext_resource type="Script" path="res://Ball/Comet_Container.gd" id="11"]
+[ext_resource type="AudioStream" uid="uid://c6idftcbfi43b" path="res://Assets/sound/paddle.wav" id="15_mhjsq"]
+[ext_resource type="Script" path="res://Effects/Fever.gd" id="16"]
+[ext_resource type="AudioStream" uid="uid://dsm3dg3dohfa2" path="res://Assets/sound/Wall.wav" id="16_8n7q7"]
+[ext_resource type="AudioStream" uid="uid://h8gni2u8r1j4" path="res://Assets/sound/brick.wav" id="17_144y8"]
+[ext_resource type="AudioStream" uid="uid://c2hc2te3ikkku" path="res://Assets/sound/die2.wav" id="18_p4w7a"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pn2be"]
+shader = ExtResource("2_c2bsh")
+shader_parameter/TWOPI = 6.28319
+shader_parameter/NUM_EXPLOSIONS = 8.0
+shader_parameter/NUM_PARTICLES = 70.0
+shader_parameter/MOD3 = Vector3(0.1031, 0.11369, 0.13787)
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(200, 1000)
 
 [sub_resource type="RectangleShape2D" id="2"]
-size = Vector2(1360, 200)
+size = Vector2(1224, 200)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("4")
+
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_pn2be")
+use_parent_material = true
+offset_right = 1024.0
+offset_bottom = 800.0
+color = Color(0.333333, 0.333333, 0.333333, 1)
+script = ExtResource("3_gn0ad")
+
+[node name="Comet_Container" type="Node2D" parent="."]
+script = ExtResource("11")
 
 [node name="Wall_Container" type="Node2D" parent="."]
 
@@ -25,16 +52,24 @@ script = ExtResource("4")
 script = ExtResource("6")
 
 [node name="ColorRect" type="ColorRect" parent="Wall_Container/Wall_Left"]
+offset_left = -190.0
+offset_top = -100.0
+offset_right = 10.0
+offset_bottom = 900.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Container/Wall_Left"]
 position = Vector2(-90, 400)
 shape = SubResource("1")
 
 [node name="Wall_Right" type="StaticBody2D" parent="Wall_Container"]
-position = Vector2(1152, 2.08165e-12)
+position = Vector2(1024, 0)
 script = ExtResource("6")
 
 [node name="ColorRect" type="ColorRect" parent="Wall_Container/Wall_Right"]
+offset_left = -10.0
+offset_top = -100.0
+offset_right = 190.0
+offset_bottom = 900.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Container/Wall_Right"]
 position = Vector2(90, 400)
@@ -44,40 +79,73 @@ shape = SubResource("1")
 script = ExtResource("6")
 
 [node name="ColorRect" type="ColorRect" parent="Wall_Container/Wall_Top"]
+offset_left = -100.0
+offset_top = -190.0
+offset_right = 1124.0
+offset_bottom = 10.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_Container/Wall_Top"]
-position = Vector2(580, -90)
+position = Vector2(512, -90)
 shape = SubResource("2")
 
 [node name="Brick_Container" type="Node2D" parent="."]
+process_mode = 3
 script = ExtResource("1")
 
 [node name="Paddle_Container" type="Node2D" parent="."]
 
 [node name="Paddle" parent="Paddle_Container" instance=ExtResource("2")]
-position = Vector2(578, 720)
+position = Vector2(462, 720)
 
 [node name="Ball_Container" type="Node2D" parent="."]
 script = ExtResource("3")
 
-[node name="Powerup_Container" type="Node2D" parent="."]
-
 [node name="Fever" type="Node2D" parent="."]
-script = ExtResource("9")
+script = ExtResource("16")
 
 [node name="Timer" type="Timer" parent="Fever"]
+wait_time = 0.75
+one_shot = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="HUD" parent="UI" instance=ExtResource("7")]
+process_mode = 0
 visible = false
 
 [node name="Pause_Menu" parent="UI" instance=ExtResource("5")]
-process_mode = 3
 visible = false
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Instructions" parent="UI" instance=ExtResource("8")]
+process_mode = 3
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+script = ExtResource("9")
+
+[node name="Music" type="AudioStreamPlayer2D" parent="."]
+process_mode = 3
+stream = ExtResource("10")
+autoplay = true
+
+[node name="Paddle_Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("15_mhjsq")
+volume_db = 11.82
+
+[node name="Wall_Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("16_8n7q7")
+volume_db = 11.82
+
+[node name="Brick_Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_144y8")
+volume_db = 11.82
+
+[node name="Ball_Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_p4w7a")
+volume_db = 11.82
 
 [connection signal="timeout" from="Fever/Timer" to="Fever" method="_on_Timer_timeout"]
